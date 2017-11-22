@@ -29,7 +29,7 @@ source(file.path(script.dir, 'dog_plot_fxn.R'))
 breed.leg <- data.table(read.table(args[1],header=T))
 
 # get path for this output
-out.data.path <- '/Users/boettger/postdoc/mutts/darwinsdogs_SMoutput/March2_12perbreed/'
+#out.data.path <- '/Users/boettger/postdoc/mutts/darwinsdogs_SMoutput/March2_12perbreed/'
         
 # get tped, tfam, probs, and marker files
 out.tped.file <- paste(args[2],'.tped',sep='')
@@ -95,14 +95,15 @@ breed.pct.table <- dog.names[, make_dog_plots(ID, Name, tped.probs.dt,
     min.hap.len, min.seg, min.pct, min.prob), by=ID]
 
 # rename breed names to add underscores
-breed.pct.table[, breed := factor(
-  breed,
-  levels=levels(breed),
-  labels=gsub(' ','_', as.character(levels(breed))))]
+# remove slash
+# this output is now written inside dog_plot_fxn.R
+# I keep the spaces instead of underscores to be consistent with Einor's naming
+# breed.pct.table[, breed := factor(
+#   breed,
+#   levels=levels(breed),
+#   labels=gsub(' ','_', as.character(levels(breed))))]
 
-##output tally of percents
-write.table(breed.pct.table, paste(out.stats,'breed_pct_table.txt', sep=''), row.names=F,
-            quote=F)
+
 
 #1: a550771-4306235-112317-918_B11.CEL    Boots
 

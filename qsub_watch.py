@@ -15,6 +15,8 @@ import time
 import os.path
 import os
 
+print(sys.argv)
+
 win = sys.argv[1]
 query = sys.argv[2]
 out = sys.argv[3]

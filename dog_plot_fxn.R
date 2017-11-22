@@ -97,8 +97,15 @@ make_dog_plots <- function(
   dev.off()
 
   #output statistics 
-  write.table(kept.breed.pcts, paste(out.stats, this.name, '_breedPcts','.txt',sep=''), quote=F )
-  write.table(mean.post, paste(out.stats, this.name, '_meanPosterior','.txt',sep=''), quote=F )
+  write.table(kept.breed.pcts, paste(out.stats, this.name, '_breedPcts','.txt',sep=''),
+  row.names = FALSE, 
+  sep = "\t",
+  quote = FALSE)
+
+  write.table(mean.post, paste(out.stats, this.name, '_meanPosterior','.txt',sep=''), 
+  row.names = FALSE, 
+  sep = "\t",
+  quote = FALSE)
 }
 
 make.dog.block <- function(tped.probs.dt) {
