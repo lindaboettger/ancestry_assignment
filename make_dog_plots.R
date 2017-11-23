@@ -91,8 +91,8 @@ dog.names[, make_dog_plots(ID, Name, tped.probs.dt,
     min.hap.len, min.seg, min.pct, min.prob), by=ID]
 
 # make all plots
-breed.pct.table <- dog.names[, make_dog_plots(ID, Name, tped.probs.dt, 
-    min.hap.len, min.seg, min.pct, min.prob), by=ID]
+# breed.pct.table <- dog.names[, make_dog_plots(ID, Name, tped.probs.dt, 
+#     min.hap.len, min.seg, min.pct, min.prob), by=ID]
 
 # rename breed names to add underscores
 # remove slash

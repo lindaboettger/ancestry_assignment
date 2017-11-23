@@ -320,6 +320,7 @@ popheader="popnum\tbreed_guess"
 sed -i "s|$refpath||g" $outfile'_SM_allchr.population_legend.txt'
 sed -i "s|.tped||g" $outfile'_SM_allchr.population_legend.txt'
 sed -i "1s/.*/$popheader/" $outfile'_SM_allchr.population_legend.txt'
+sed -i 's|/||g' $outfile'_SM_allchr.population_legend.txt'
 
 
 
@@ -384,19 +385,19 @@ Rscript $script_dir/make_dog_plots.R \
 # Making plots for a550771-4306235-112317-918_A12.CEL : Tesla
 
 
-#concatinate the mean posterior files
-for filename in $outfile'_stats/'*_meanPosterior.txt
-do
-    dogname=$(echo $filename | perl -pe 's/.*\/([\w]+)_meanPosterior.txt/$1/')
-    perl -pe "s/^1/$dogname/" $filename | grep -Pv '^x'
-done > cmb_meanPost.txt
+# #concatinate the mean posterior files
+# for filename in $outfile'_stats/'*_meanPosterior.txt
+# do
+#     dogname=$(echo $filename | perl -pe 's/.*\/([\w]+)_meanPosterior.txt/$1/')
+#     perl -pe "s/^1/$dogname/" $filename | grep -Pv '^x'
+# done > cmb_meanPost.txt
 
 #delete the intermediate files
 
 
-## re-add underscores in breed pct file
-pct_files=$outfile'_stats/'*_breedPcts.txt
-python $script_dir/fix_joint_stats.py $pct_files
+# ## re-add underscores in breed pct file
+# pct_files=$outfile'_stats/'*_breedPcts.txt
+# python $script_dir/fix_joint_stats.py $pct_files
 
 
 # Adjust the phase to account for breeds if fix_phase==T
@@ -551,17 +552,20 @@ if [ $fix_phase == T ]; then
      # Fix population legend #
      cp $outfile'_SM_phasefix_01.population_legend.txt' $outfile'_SM_phasefix_allchr.population_legend.txt'
      popheader="popnum\tbreed_guess"
-     sed -i "1s/.*/$popheader/" $outfile'_SM_phasefix_allchr.population_legend.txt'
      sed -i "s|$refpath/||g" $outfile'_SM_phasefix_allchr.population_legend.txt'
      sed -i "s|.tped||g" $outfile'_SM_phasefix_allchr.population_legend.txt'
+     sed -i "1s/.*/$popheader/" $outfile'_SM_phasefix_allchr.population_legend.txt'
+     sed -i 's|/||g' $outfile'_SM_phasefix_allchr.population_legend.txt'
+
 
     ### Make folders for the fixphase plots ###
      mkdir $outfile'_pie_fixphase'
      mkdir $outfile'_bar_fixphase'
      mkdir $outfile'_paint_fixphase'
+     mkdir $outfile'_stats_fixphase'
 
     ## remove individual chromosome files
-    #rm $outfile'_SM_phasefix_'[0-9]*
+    rm $outfile'_SM_phasefix_'[0-9]*
 
     ########## Call R to make plots ############
     # Variables to pass:
@@ -576,6 +580,8 @@ if [ $fix_phase == T ]; then
     # 9. outpath for bar charts
     # 10. outpath for pie charts
     # 11. outpath for chr paintings
+    # 12. dog stats
+    # 13. script directory
 
 
     Rscript $script_dir/make_dog_plots.R \
@@ -589,8 +595,9 @@ if [ $fix_phase == T ]; then
         $min_prob \
         $outfile'_bar_fixphase/' \
         $outfile'_pie_fixphase/' \
-        $outfile'_paint_fixphase/'
-
+        $outfile'_paint_fixphase/' \
+        $outfile'_stats_fixphase/' \
+        $script_dir
 
 fi
 
