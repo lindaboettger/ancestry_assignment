@@ -419,13 +419,13 @@ if [ $fix_phase == T ]; then
         $outfile'_SM_allchr.population_legend.txt' \
         $outfile'_SM_allchr' \
         $outfile'_genmap.bim' \
-        $outfile'_allchr.phased' \
+        $outfile'_filt_allchr_mydogs.phased' \
         $outfile'_phasefix'
     
 
 
     # make new tfam 
-     cp $outfile'_allchr.phased.tfam' $outfile'_phasefix.tfam'
+    cp $outfile'_filt_allchr_mydogs.phased.tfam' $outfile'_phasefix.tfam'
 
     # make chr alphanumeric
     echo "$(awk '{$1 = sprintf("%02d", $1); print}' $outfile'_phasefix.tped')" > $outfile'_phasefix.tped'
@@ -437,8 +437,8 @@ if [ $fix_phase == T ]; then
 
     ### Start Supportmix run by chromosome ####
     while read c; do
-    python $script_dir/qsub_watch.py $win $query $out $c $script &      
-    done < /seq/vgb/linda/mutts/scripts/dog_chrs_alphanum.txt
+        python $script_dir/qsub_watch.py $win $query $out $c $script &      
+    done < $outfile'_mychrs_alphanum.txt'
 
 
     # check that there are still python jobs with this outfile name is `ps -ef`; there will always
@@ -457,7 +457,7 @@ if [ $fix_phase == T ]; then
         echo "Supportmix run complete, all $nchr outfiles present."
     fi
 
-
+    #/seq/vgb/linda/mutts/err/mutt_errSM35
 
     #### breed tpeds
     cat \
