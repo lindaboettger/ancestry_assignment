@@ -9,10 +9,26 @@ require(ggplot2)
 require(ggrepel)
 require(base)
 require(scales)
-
+require(base)
 
 # get directory name
-script.dir <- dirname(sys.frame(1)$ofile)
+# Old way, doesnt always work: script.dir <- dirname(sys.frame(1)$ofile)
+# New way: 
+#  https://stackoverflow.com/questions/1815606/
+#   rscript-determine-path-of-the-executing-script
+thisFile <- function() {
+  cmdArgs <- commandArgs(trailingOnly = FALSE)
+  needle <- "--file="
+  match <- grep(needle, cmdArgs)
+  if (length(match) > 0) {
+    # Rscript
+    return(normalizePath(sub(needle, "", cmdArgs[match])))
+  } else {
+    # 'source'd via R console
+    return(normalizePath(sys.frames()[[1]]$ofile))
+  }
+}
+script.dir <- dirname(thisFile())
 
 # load recombination functions from scripts dir
 source(file.path(script.dir, 'recomb_fxn.R'))
