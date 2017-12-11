@@ -365,39 +365,6 @@ Rscript $script_dir/make_dog_plots.R \
     $script_dir 
     #$posterior_cutoff
 
-    ### it starts over???
-#     Making plots for DX11 : Vera_Lynn_MM
-# Making plots for DX02 : Hunter_MM
-# Making plots for D157 : Beskow_MM
-# Making plots for DX03 : Reily_MM
-# Empty data.table (0 rows) of 1 col: ID
-# Making plots for a550771-4306235-112317-918_A01.CEL : Hunter
-# Making plots for a550771-4306235-112317-918_A02.CEL : Daytona
-# Making plots for a550771-4306235-112317-918_A03.CEL : Lily2
-# Making plots for a550771-4306235-112317-918_A04.CEL : Scarlet
-# Making plots for a550771-4306235-112317-918_A05.CEL : Peso
-# Making plots for a550771-4306235-112317-918_A06.CEL : Fendi
-# Making plots for a550771-4306235-112317-918_A07.CEL : Bella
-# Making plots for a550771-4306235-112317-918_A08.CEL : Andy
-# Making plots for a550771-4306235-112317-918_A09.CEL : Lucy2
-# Making plots for a550771-4306235-112317-918_A10.CEL : Barney
-# Making plots for a550771-4306235-112317-918_A11.CEL : Moose
-# Making plots for a550771-4306235-112317-918_A12.CEL : Tesla
-
-
-# #concatinate the mean posterior files
-# for filename in $outfile'_stats/'*_meanPosterior.txt
-# do
-#     dogname=$(echo $filename | perl -pe 's/.*\/([\w]+)_meanPosterior.txt/$1/')
-#     perl -pe "s/^1/$dogname/" $filename | grep -Pv '^x'
-# done > cmb_meanPost.txt
-
-#delete the intermediate files
-
-
-# ## re-add underscores in breed pct file
-# pct_files=$outfile'_stats/'*_breedPcts.txt
-# python $script_dir/fix_joint_stats.py $pct_files
 
 
 # Adjust the phase to account for breeds if fix_phase==T
@@ -431,9 +398,36 @@ if [ $fix_phase == T ]; then
     echo "$(awk '{$1 = sprintf("%02d", $1); print}' $outfile'_phasefix.tped')" > $outfile'_phasefix.tped'
 
 
-    script=$outfile'_run_supportmix_bychr.sh'
+
+
+    # Make Supportmix input file for our reference panel #
+    echo 'supportmix=/seq/vgb/linda/bin/SupportMixDistribution/Application/SupportMix' > $outfile'_run_supportmix_phasefixed_bychr.sh'
+    printf 'spmix_command=' >> $outfile'_run_supportmix_phasefixed_bychr.sh'
+    printf '"' >> $outfile'_run_supportmix_phasefixed_bychr.sh'
+    echo '$supportmix \' >> $outfile'_run_supportmix_phasefixed_bychr.sh'
+    echo '    --save ${out}_${chr} \' >> $outfile'_run_supportmix_phasefixed_bychr.sh'
+    echo '    --chromosome=$chr \' >> $outfile'_run_supportmix_phasefixed_bychr.sh'
+    echo '    --window=$win \' >> $outfile'_run_supportmix_phasefixed_bychr.sh'
+    printf '    ' >> $outfile'_run_supportmix_phasefixed_bychr.sh'
+    # find all tpeds and add them as supportmix arguments (removing newlines)
+    ls -1 $refpath/*.tped | tr '\n' ' ' >> $outfile'_run_supportmix_phasefixed_bychr.sh'
+    # adding query dataset ($query.tped) to end of file
+    printf $outfile'_phasefix.tped' >> $outfile'_run_supportmix_phasefixed_bychr.sh'
+    printf '"' >> $outfile'_run_supportmix_phasefixed_bychr.sh'
+    printf "\n" >> $outfile'_run_supportmix_phasefixed_bychr.sh'
+    # print the supportmix command and run it.
+    printf 'printf "$spmix_command"' >> $outfile'_run_supportmix_phasefixed_bychr.sh'
+    printf "\n" >> $outfile'_run_supportmix_phasefixed_bychr.sh'
+    printf '`$spmix_command`' >> $outfile'_run_supportmix_phasefixed_bychr.sh'
+    printf "\n" >> $outfile'_run_supportmix_phasefixed_bychr.sh'
+
+
+    ### Start Supportmix run by chromosome ####
+    #script=$script_dir/run_supportmix_bychr_may21ref.sh
+    script=$outfile'_run_supportmix_phasefixed_bychr.sh'
     query=$outfile'_phasefix'
     out=$outfile'_SM_phasefix'
+
 
     ### Start Supportmix run by chromosome ####
     while read c; do
